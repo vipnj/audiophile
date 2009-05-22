@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<componentPackage>
+	
+	<!-- Audiophile -->
+	<component id="Audiophile" class="com.audiophile.Audiophile"/>
+	<component id="AudioSound" class="com.audiophile.audio.AudioSound"/>
+	<component id="TimeShiftEffect" class="com.audiophile.effects.TimeShiftEffect" />
+	
+</componentPackage>
