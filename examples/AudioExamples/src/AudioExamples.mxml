@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:as="http://audiospike.com/audiophile/2009"
+	creationComplete="init()" backgroundColor="#333333" layout="absolute" horizontalScrollPolicy="off" verticalScrollPolicy="off" viewSourceURL="srcview/index.html">
+	<mx:Script>
+		<![CDATA[
+			import com.audiophile.effects.NintendoEffect;
+			import com.audiophile.audio.AudioSound;
+			import com.audiovision.utils.ColorMatrixUtil;
+			import com.audiovision.utils.PaletteMapUtil;
+			import com.audiovision.utils.DisplacementMapUtil;
+			
+			import com.audiophile.Audiophile;
+			import com.audiophile.synth.SineWave;
+			import com.audiophile.effects.TimeShiftEffect;
+			
+			private var audio:AudioSound;
+			[Bindable] private var channel:SoundChannel;
+			
+			private var audiophile:Audiophile;
+			private var timeShift:TimeShiftEffect;
+			private var nintendo:NintendoEffect;
+			
+			private function init():void {
+				var request:URLRequest = new URLRequest("https://audiospike.s3.amazonaws.com/audio/ben382fat1.mp3");
+				audio = new AudioSound(request);
+				audio.sound.addEventListener(Event.COMPLETE, sound_completeHandler, false, 0, true);
+			}
+			
+			private function sound_completeHandler(event:Event):void {
+				timeShift = new TimeShiftEffect();
+				nintendo = new NintendoEffect();
+				audio.effects = [timeShift];
+				playButton.enabled = true;
+			}
+			
+			private function play():void {
+				audiophile = new Audiophile(audio);
+				channel = audiophile.play();
+			}
+			
+			private function stop():void {
+				//audiophile.stop();
+				channel.stop();
+				channel = null;
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:LinearGradient id="superblue">
+		<mx:entries>
+			<mx:GradientEntry color="#63B823" alpha="0" />
+			<mx:GradientEntry color="#63B823" />
+			<mx:GradientEntry color="#331404" />
+			<mx:GradientEntry color="#03D7FC" />
+			<mx:GradientEntry color="#8DCBF2" />
+			<mx:GradientEntry color="#310433" />
+			<mx:GradientEntry color="#FFFFFF" />
+		</mx:entries>
+	</mx:LinearGradient>
+	
+	<as:Visualization id="visualization" target="{oscilloscope}" width="{Math.min(this.width, 600)}" height="{Math.min(this.height, 200)}" verticalCenter="0" horizontalCenter="0">
+		<as:animations>
+			<mx:BlurFilter />
+			<mx:DisplacementMapFilter mapBitmap="{DisplacementMapUtil.createTunnel(visualization.width, visualization.height)}" 
+				scaleX="10" scaleY="10" componentX="{BitmapDataChannel.RED}" componentY="{BitmapDataChannel.GREEN}" />
+		</as:animations>
+		<as:filters>
+			<as:PaletteMapFilter alpha="{PaletteMapUtil.convertFillToPalette(superblue)}" />
+		</as:filters>
+	</as:Visualization>
+	<as:Oscilloscope id="oscilloscope" x="{visualization.x}" y="{visualization.y}" width="{visualization.width}" height="{visualization.height}" />
+	
+	<mx:VSlider id="volumeSlider" right="20" verticalCenter="0" height="{Math.min(visualization.height, height/1.2)}"
+		 minimum="0" maximum="1" value="1" liveDragging="true" change="audio.volume = volumeSlider.value" />
+	<mx:HBox width="{Math.min(visualization.width, width/1.2)}" horizontalCenter="0" bottom="20" verticalAlign="middle">
+		<mx:Button id="playButton" label="{channel ? 'Stop' : 'Play'}" enabled="false" click="channel ? stop() : play()" />
+		<mx:HSlider id="effectSlider" width="100%" minimum="-2" maximum="2" value="1" liveDragging="true" change="timeShift.speed = effectSlider.value" />
+		<mx:Button id="effectButton" label="Add Effect" toggle="true" click="audio.effects = effectButton.selected ? [timeShift, nintendo] : [timeShift]" />
+	</mx:HBox>
+	
+</mx:Application>
