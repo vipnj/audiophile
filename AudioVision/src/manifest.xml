@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<componentPackage>
+	
+	<!-- AudioVision -->
+	<component id="Oscilloscope" class="com.audiovision.flex.Oscilloscope"/>
+	<component id="Visualization" class="com.audiovision.flex.Visualization"/>
+	
+	<component id="PaletteMapFilter" class="com.audiovision.filters.PaletteMapFilter" />
+	<component id="ColorMatrixUtil" class="com.audiovision.utils.ColorMatrixUtil" />
+	<component id="DisplacementMapUtil" class="com.audiovision.utils.DisplacementMapUtil" />
+	<component id="PaletteMapUtil" class="com.audiovision.utils.PaletteMapUtil" />
+	
+</componentPackage>
